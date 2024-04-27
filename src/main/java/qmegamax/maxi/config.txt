@@ -1,0 +1,22 @@
+rgmkrgkmrtb
+#gvrgtbtbt
+#Sets how many tables there are.
+tableAmount=10
+#What is the maximum occupation time per table in minitues.
+occupationTime=120
+#Sets how many chairs per table there are.
+chairAmount=10
+#Can guests create reservations
+areGuestsAllowed=true
+#After how many incorrect attempts capcha appears.
+capchaAmount=2
+#Database ip
+databaseIp=localhost:3306/maxi
+#Database username
+databaseUser=root
+#Database password
+databasePassword=tupaparola
+#Does the code incrypt passwords
+useEncryption=false
+#The key for decoding(seed). WARNING: SET THIS ON THE FIRST LAUNCH AND DO NOT CHANGE
+encryptionKey=gay
