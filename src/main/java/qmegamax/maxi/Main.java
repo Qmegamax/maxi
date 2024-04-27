@@ -1,12 +1,20 @@
 package main.java.qmegamax.maxi;
 
+import main.java.qmegamax.maxi.pages.EditReservationPage;
+import main.java.qmegamax.maxi.pages.PendingReservationsPage;
 import main.java.qmegamax.maxi.pages.errors.ConfigReadErrorPage;
 import main.java.qmegamax.maxi.pages.LoginPage;
 import main.java.qmegamax.maxi.pages.errors.ConnectionErrorPage;
+import main.java.qmegamax.maxi.pages.errors.LognErrorPage;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
@@ -23,6 +31,8 @@ public class Main {
     public static String DATABASEPASSWORD;
     public static boolean USEENCRYPTION;
     public static String ENCRYPTIONKEY;
+    public static int OPENINGHOUR;
+    public static int CLOSINGHOUR;
 
     public static boolean getConfig(){
         try {
@@ -74,9 +84,17 @@ public class Main {
                     ENCRYPTIONKEY = data.split("=")[1];
                     completedChecks++;
                 }
+                if (data.split("=")[0].equals("openingHour")) {
+                    OPENINGHOUR = Integer.parseInt(data.split("=")[1]);
+                    completedChecks++;
+                }
+                if (data.split("=")[0].equals("closingHour")) {
+                    CLOSINGHOUR = Integer.parseInt(data.split("=")[1]);
+                    completedChecks++;
+                }
             }
 
-            if(completedChecks!=11) {throw new Exception();}
+            if(completedChecks!=13) {throw new Exception();}
 
             sc.close();
         } catch (Exception e) {
@@ -84,6 +102,54 @@ public class Main {
             return false;
         }
         return true;
+    }
+
+    public static ArrayList<Credential> GetCredentialsFromDatabase(){
+        ArrayList<Credential> credentials = new ArrayList<>();
+
+        try{
+            Statement statement = CONNECTION.createStatement();
+            ResultSet resultSet = statement.executeQuery("select userId, name, email, password, type from credentials");
+
+            while (resultSet.next()) {
+                credentials.add(new Credential(resultSet.getInt(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getString(5)));
+            }
+        }
+        catch (Exception ex) {System.out.println("uhoh");}
+
+        return  credentials;
+    }
+
+    public static ArrayList<Reservation> GetReservationsFromDatabase(){
+        ArrayList<Reservation> reservations = new ArrayList<>();
+
+        try{
+            Statement statement = CONNECTION.createStatement();
+            ResultSet resultSet = statement.executeQuery("select reservationId, time, name, notes, tableId from reservations");
+
+            while (resultSet.next()) {
+                reservations.add(new Reservation(resultSet.getInt(1),resultSet.getObject(2,LocalDateTime.class),resultSet.getString(3),resultSet.getString(4),resultSet.getInt(5)));
+            }
+        }
+        catch (Exception ex) {System.out.println(ex);}
+
+        return reservations;
+    }
+
+    public static ArrayList<Reservation> GetPendingReservationsFromDatabase(){
+        ArrayList<Reservation> reservations = new ArrayList<>();
+
+        try{
+            Statement statement = CONNECTION.createStatement();
+            ResultSet resultSet = statement.executeQuery("select reservationId, time, name, notes, tableId from pendingReservations");
+
+            while (resultSet.next()) {
+                reservations.add(new Reservation(resultSet.getInt(1),resultSet.getObject(2,LocalDateTime.class),resultSet.getString(3),resultSet.getString(4),resultSet.getInt(5)));
+            }
+        }
+        catch (Exception ex) {System.out.println(ex);}
+
+        return reservations;
     }
 
     public static void main(String[] args) {
@@ -95,7 +161,7 @@ public class Main {
         if(!getConfig())return;
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+           // Class.forName("com.mysql.cj.jdbc.Driver");
             CONNECTION = DriverManager.getConnection("jdbc:mysql://"+DATABASEIP,DATABASEUSER, DATABASEPASSWORD);
         }
         catch (Exception e) {

@@ -1,23 +1,28 @@
 package main.java.qmegamax.maxi.pages;
 
-import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
-import main.java.qmegamax.maxi.pages.errors.LognErrorPage;
+import main.java.qmegamax.maxi.DocumentSizeFilter;
+import main.java.qmegamax.maxi.Reservation;
+import main.java.qmegamax.maxi.pages.errors.AddingReservationErrorPage;
 
 import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.DateFormatter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.Objects;
+import java.sql.PreparedStatement;
+import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
 
 import static main.java.qmegamax.maxi.Main.*;
 
 public class GuestAddReservationPage extends JFrame{
     public boolean capchaCompeted;
 
-    private int incorrectGuesses=0;
+    private int submittedReservations =0;
 
     public GuestAddReservationPage(){
         this.setTitle("Add a reservation");
@@ -30,70 +35,140 @@ public class GuestAddReservationPage extends JFrame{
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         this.add(panel);
 
-        JLabel label = new JLabel("Add reservations");
+        JLabel label = new JLabel("Add a reservation");
         label.setFont(label.getFont().deriveFont(Font.BOLD, 27f));
         panel.add(label,gbc);
 
-        JDateChooser jc=new JDateChooser();
-        panel.add(jc,gbc);
+        JPanel box = new JPanel();
+        box.setBorder(new CompoundBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),new EmptyBorder(14, 10, 14, 10)));
+        box.setLayout(new GridBagLayout());
+        panel.add(box,gbc);
 
+        JDateChooser dateChooser=new JDateChooser();
+        dateChooser.setMinSelectableDate(new Date());
+        dateChooser.setMaxSelectableDate(new Date(new Date().getTime()+ 604800000L));
+        dateChooser.setPreferredSize(new Dimension(140,20));
+        box.add(dateChooser,gbc);
 
-        JTextField textField1 = new JTextField("username",16);
-        textField1.addMouseListener(new MouseListener() {
+        JPanel contentPanel1 = new JPanel(){@Override
+        public Dimension getPreferredSize() {
+            return new Dimension(140, 30);
+        }};
+        box.add(contentPanel1,gbc);
+
+        JLabel label1 = new JLabel("Time:   ");
+        contentPanel1.add(label1);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 24);
+        calendar.set(Calendar.MINUTE, 0);
+        SpinnerDateModel model = new SpinnerDateModel();
+        model.setValue(calendar.getTime());
+        JSpinner spinner1 = new JSpinner(model);
+        JSpinner.DateEditor editor = new JSpinner.DateEditor(spinner1, "HH:mm");
+        DateFormatter formatter = (DateFormatter)editor.getTextField().getFormatter();
+        formatter.setAllowsInvalid(false);
+        formatter.setOverwriteMode(true);
+        spinner1.setEditor(editor);
+        contentPanel1.add(spinner1,gbc);
+
+        JTextField textField = new JTextField("name",12);
+        AbstractDocument abstractDocument1=(AbstractDocument)textField.getDocument();
+
+        abstractDocument1.setDocumentFilter(new DocumentSizeFilter(30));
+        textField.addMouseListener(new MouseListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {if(textField1.getText().equals("username")) textField1.setText("");}
+            public void mouseClicked(MouseEvent e) {if(textField.getText().equals("name")) textField.setText("");}
             public void mousePressed(MouseEvent e) {}
             public void mouseReleased(MouseEvent e) {}
             public void mouseEntered(MouseEvent e) {}
             public void mouseExited(MouseEvent e) {}
         });
-        panel.add(textField1,gbc);
+        box.add(textField,gbc);
 
-        JTextField textField2 = new JTextField("password",16);
-        textField2.addMouseListener(new MouseListener() {
+        JTextArea textArea = new JTextArea("notes",4,12);
+        textArea.setPreferredSize(new Dimension(140,60));
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        AbstractDocument abstractDocument2=(AbstractDocument)textArea.getDocument();
+
+        abstractDocument2.setDocumentFilter(new DocumentSizeFilter(100));
+        textArea.addMouseListener(new MouseListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {if(textField2.getText().equals("password")) textField2.setText("");}
+            public void mouseClicked(MouseEvent e) {if(textArea.getText().equals("notes")) textArea.setText("");}
             public void mousePressed(MouseEvent e) {}
             public void mouseReleased(MouseEvent e) {}
             public void mouseEntered(MouseEvent e) {}
             public void mouseExited(MouseEvent e) {}
         });
-        panel.add(textField2,gbc);
+        box.add(textArea,gbc);
+
+        JPanel contentPanel2 = new JPanel(){@Override
+        public Dimension getPreferredSize() {
+            return new Dimension(140, 30);
+        }};
+        box.add(contentPanel2,gbc);
+
+        JLabel label2 = new JLabel("Table:   ");
+        contentPanel2.add(label2);
+
+        JSpinner spinner2 = new JSpinner(new SpinnerNumberModel(1,1,TABLEAMOUNT,1));
+        spinner2.setEditor(new JSpinner.DefaultEditor(spinner2));
+        spinner2.setPreferredSize(new Dimension(36,20));
+        contentPanel2.add(spinner2,gbc);
 
         JButton button1 = new JButton("Add");
         button1.addActionListener(e -> {
-                if(incorrectGuesses>=CAPCHAAMOUNT && !capchaCompeted){
-                    new CapchaPage(this);
+            if(submittedReservations >= CAPCHAAMOUNT && !capchaCompeted){
+                new CapchaPage(this);
+                return;
+            }
+
+            Date time=(Date) spinner1.getValue();
+            if(time.getHours()<OPENINGHOUR || time.getHours()>CLOSINGHOUR-OCUPATIONTIME){
+                new AddingReservationErrorPage("Time outside of working hours!");
+                return;
+            }
+            if(dateChooser.getDate()==null){
+                new AddingReservationErrorPage("No date chosen!");
+                return;
+            }
+            LocalDateTime date=LocalDateTime.of(dateChooser.getDate().getYear()+1900,dateChooser.getDate().getMonth()+1,dateChooser.getDate().getDate(),time.getHours(),time.getMinutes());
+            String name=textField.getText();
+            String expression = "^[a-zA-Z\\s]+";
+            if(!name.matches(expression)){
+                new AddingReservationErrorPage("Invalid name!");
+                return;
+            }
+            String notes=textArea.getText();
+            int tableId=(Integer) spinner2.getValue();
+
+            for(Reservation reservation:GetPendingReservationsFromDatabase()){
+                LocalDateTime date1 = reservation.date;
+                Date date2 = dateChooser.getDate();
+                if(reservation.table==tableId && date1.getYear()==date2.getYear()+1900&& date1.getMonthValue()==date2.getMonth()+1 && date1.getDayOfMonth()==date2.getDate() && time.getHours()*60+time.getMinutes()>date1.getHour()*60+date1.getMinute()-OCUPATIONTIME && time.getHours()*60+time.getMinutes()<date1.getHour()*60+date1.getMinute()+OCUPATIONTIME){
+                    new AddingReservationErrorPage("Table is not free at this time!");
                     return;
                 }
+            }
+
+            try {
+                String sql = " insert into pendingReservations (reservationId, time, name, notes, tableId)"
+                        + " values (?, ?, ?, ?, ?)";
+
+                PreparedStatement preparedStmt = CONNECTION.prepareStatement(sql);
+                preparedStmt.setInt (1, GetPendingReservationsFromDatabase().size()+1);
+                preparedStmt.setString (2, date.toString().split("T")[0]+" "+date.toString().split("T")[1]);
+                preparedStmt.setString   (3, name);
+                preparedStmt.setString(4, notes);
+                preparedStmt.setInt    (5, tableId);
+
+                preparedStmt.execute();
 
                 capchaCompeted=false;
-
-                String username=textField1.getText();
-                String password=textField2.getText();
-
-                try{
-                    Statement statement = CONNECTION.createStatement();
-                    ResultSet resultSet = statement.executeQuery("select name, password, type from credentials");
-
-                    boolean foundMatch=false;
-                    while (resultSet.next()) {
-                        if(Objects.equals(username, resultSet.getString("name")) && Objects.equals(password, resultSet.getString("password"))){
-
-                            if(resultSet.getString("type").equals("USER")) {new PendingReservationsPage();}
-                            if(resultSet.getString("type").equals("ADMIN")) {new EditReservationPage();}
-
-                            foundMatch=true;
-                            this.setVisible(false);
-                            this.dispose();
-                            break;
-                        }
-                    }
-                    if(!foundMatch){new LognErrorPage(); incorrectGuesses++;}
-                    resultSet.close();
-                    statement.close();
-                }
-                catch (Exception ex) {System.out.println("uhoh");}
+                submittedReservations++;
+                new ReservationSuccsesfullPage();
+            }catch (Exception ex) {System.out.println("uhoh");}
         });
         panel.add(button1,gbc);
 

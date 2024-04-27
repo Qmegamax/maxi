@@ -20,3 +20,7 @@ databasePassword=tupaparola
 useEncryption=false
 #The key for decoding(seed). WARNING: SET THIS ON THE FIRST LAUNCH AND DO NOT CHANGE
 encryptionKey=gay
+#Opening hour
+openingHour=8
+#Closing hour
+closingHour=20
