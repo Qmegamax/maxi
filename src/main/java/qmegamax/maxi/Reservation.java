@@ -16,6 +16,5 @@ public class Reservation {
         this.name=name;
         this.notes=notes;
         this.table= table;
-
     }
 }

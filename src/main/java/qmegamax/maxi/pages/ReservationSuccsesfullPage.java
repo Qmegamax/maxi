@@ -10,7 +10,7 @@ import static main.java.qmegamax.maxi.Main.PATH;
 public class ReservationSuccsesfullPage extends JFrame{
 
     public ReservationSuccsesfullPage(){
-        this.setTitle("Error");
+        this.setTitle("Success");
         ImageIcon img = new ImageIcon(PATH+"icon.png");
         this.setIconImage(img.getImage());
 

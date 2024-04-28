@@ -91,13 +91,13 @@ public class LoginPage extends JFrame {
 
             boolean foundMatch = false;
             for (Credential credential : Main.GetCredentialsFromDatabase()) {
-                if (Objects.equals(credential.name, username) && Objects.equals(credential.password, password)) {
+                if (Objects.equals(credential.name, username) && Objects.equals(USEENCRYPTION?decryptPassword(credential.password,ENCRYPTIONKEY):credential.password, password)) {
 
                     if (credential.type == Credential.AccountType.USER) {
                         new PendingReservationsPage();
                     }
                     if (credential.type == Credential.AccountType.ADMIN) {
-                        new EditReservationPage();
+                        new ConfirmReservationsPage();
                     }
 
                     foundMatch = true;

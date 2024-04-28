@@ -14,10 +14,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.PreparedStatement;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import static main.java.qmegamax.maxi.Main.*;
+import static main.java.qmegamax.maxi.Main.GetPendingReservationsFromDatabase;
 
 public class GuestAddReservationPage extends JFrame{
     public boolean capchaCompeted;
@@ -125,7 +127,7 @@ public class GuestAddReservationPage extends JFrame{
             }
 
             Date time=(Date) spinner1.getValue();
-            if(time.getHours()<OPENINGHOUR || time.getHours()>CLOSINGHOUR-OCUPATIONTIME){
+            if(time.getHours()<OPENINGHOUR || time.getHours()>CLOSINGHOUR-OCUPATIONTIME/60){
                 new AddingReservationErrorPage("Time outside of working hours!");
                 return;
             }
@@ -143,7 +145,9 @@ public class GuestAddReservationPage extends JFrame{
             String notes=textArea.getText();
             int tableId=(Integer) spinner2.getValue();
 
-            for(Reservation reservation:GetPendingReservationsFromDatabase()){
+            ArrayList<Reservation> currentReservations=GetPendingReservationsFromDatabase();
+            currentReservations.addAll(GetReservationsFromDatabase());
+            for(Reservation reservation:currentReservations){
                 LocalDateTime date1 = reservation.date;
                 Date date2 = dateChooser.getDate();
                 if(reservation.table==tableId && date1.getYear()==date2.getYear()+1900&& date1.getMonthValue()==date2.getMonth()+1 && date1.getDayOfMonth()==date2.getDate() && time.getHours()*60+time.getMinutes()>date1.getHour()*60+date1.getMinute()-OCUPATIONTIME && time.getHours()*60+time.getMinutes()<date1.getHour()*60+date1.getMinute()+OCUPATIONTIME){
@@ -157,7 +161,8 @@ public class GuestAddReservationPage extends JFrame{
                         + " values (?, ?, ?, ?, ?)";
 
                 PreparedStatement preparedStmt = CONNECTION.prepareStatement(sql);
-                preparedStmt.setInt (1, GetPendingReservationsFromDatabase().size()+1);
+                ArrayList<Reservation> reservations=GetPendingReservationsFromDatabase();
+                preparedStmt.setInt (1, reservations.isEmpty()?1:reservations.get(reservations.size()-1).id+1);
                 preparedStmt.setString (2, date.toString().split("T")[0]+" "+date.toString().split("T")[1]);
                 preparedStmt.setString   (3, name);
                 preparedStmt.setString(4, notes);

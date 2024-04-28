@@ -1,6 +1,5 @@
 package main.java.qmegamax.maxi.pages;
 
-import main.java.qmegamax.maxi.Credential;
 import main.java.qmegamax.maxi.Reservation;
 
 import javax.swing.*;
@@ -11,16 +10,19 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import static main.java.qmegamax.maxi.Main.*;
 import static main.java.qmegamax.maxi.Main.GetReservationsFromDatabase;
 
-public class EditCredentialsPage extends JFrame{
+public class EditReservationsPage extends JFrame{
+
     JButton refreshButton;
 
-    public EditCredentialsPage(){
-        this.setTitle("Edit credentials");
+    public EditReservationsPage(){
+        this.setTitle("Edit reservations");
         ImageIcon img = new ImageIcon(PATH+"icon.png");
         this.setIconImage(img.getImage());
 
@@ -32,7 +34,7 @@ public class EditCredentialsPage extends JFrame{
         JPanel subPanel = new JPanel(new GridBagLayout());
         panel.add(subPanel,gbc);
 
-        JLabel label1 = new JLabel("All credentials:");
+        JLabel label1 = new JLabel("All reservations:");
         subPanel.add(label1);
 
         DefaultTableModel defaultTableModel=new DefaultTableModel() {
@@ -40,10 +42,10 @@ public class EditCredentialsPage extends JFrame{
             public boolean isCellEditable(int row, int column) {return column==5;}
         };
         defaultTableModel.addColumn("Id");
+        defaultTableModel.addColumn("Time");
         defaultTableModel.addColumn("Name");
-        defaultTableModel.addColumn("Email");
-        defaultTableModel.addColumn("Password");
-        defaultTableModel.addColumn("Type");
+        defaultTableModel.addColumn("Notes");
+        defaultTableModel.addColumn("Table");
         defaultTableModel.addColumn("Edit");
 
         refreshButton = new JButton("Refresh");
@@ -64,20 +66,22 @@ public class EditCredentialsPage extends JFrame{
         table1.getColumnModel().getColumn(3).setPreferredWidth(100);
         table1.getColumnModel().getColumn(4).setPreferredWidth(10);
         table1.getColumnModel().getColumn(5).setPreferredWidth(20);
-        table1.getColumn("Edit").setCellRenderer(new ButtonRenderer1());
+        table1.getColumn("Edit").setCellRenderer(new ButtonRenderer2());
         table1.getColumn("Edit").setCellEditor(
-                new ButtonEditor1(new JCheckBox(),refreshButton));
+                new ButtonEditor2(new JCheckBox(),refreshButton));
         JScrollPane scrollPane1 = new JScrollPane(table1);
         scrollPane1.setPreferredSize(new Dimension(700,700));
         panel.add(scrollPane1,gbc);
 
         refreshButton.addActionListener(e -> {
-            ArrayList<Credential> credentials=GetCredentialsFromDatabase();
+            ArrayList<Reservation> reservations=GetReservationsFromDatabase();
+
+            reservations.sort((d1,d2) -> d1.date.compareTo(d2.date));
 
             int currentRow=0;
             DefaultTableModel resetModel = (DefaultTableModel) table1.getModel();
             resetModel.setRowCount(0);
-            for(Credential credential:credentials) {
+            for(Reservation reservation:reservations) {
 
                 if (table1.getRowCount() < currentRow + 1) {
                     TableModel model = table1.getModel();
@@ -85,19 +89,19 @@ public class EditCredentialsPage extends JFrame{
                     defaultTableModel1.addRow(new Object[]{"-","-", "-", "-", "-", "Edit"});
                 }
 
-                table1.setValueAt(credential.id, currentRow, 0);
-                table1.setValueAt(credential.name, currentRow, 1);
-                table1.setValueAt(credential.email, currentRow, 2);
-                table1.setValueAt(credential.password, currentRow, 3);
-                table1.setValueAt(credential.type, currentRow, 4);
+                table1.setValueAt(reservation.id, currentRow, 0);
+                table1.setValueAt(reservation.date.toString(), currentRow, 1);
+                table1.setValueAt(reservation.name, currentRow, 2);
+                table1.setValueAt(reservation.notes, currentRow, 3);
+                table1.setValueAt(String.valueOf(reservation.table), currentRow, 4);
                 currentRow++;
             }
         });
         panel.add(refreshButton,gbc);
 
-        JButton btnNewButton1 = new JButton("Add a user");
+        JButton btnNewButton1 = new JButton("Add a reservation");
         btnNewButton1.addActionListener(e -> {
-            new AddUserPage();
+            new AddReservationPage(false);
         });
         panel.add(btnNewButton1,gbc);
 
@@ -118,9 +122,9 @@ public class EditCredentialsPage extends JFrame{
     }
 }
 
-class ButtonRenderer1 extends JButton implements TableCellRenderer {
+class ButtonRenderer2 extends JButton implements TableCellRenderer {
 
-    public ButtonRenderer1() {
+    public ButtonRenderer2() {
         setOpaque(true);
     }
 
@@ -137,12 +141,12 @@ class ButtonRenderer1 extends JButton implements TableCellRenderer {
     }
 }
 
-class ButtonEditor1 extends DefaultCellEditor {
+class ButtonEditor2 extends DefaultCellEditor {
     protected JButton button;
     protected JButton refreshButton;
     private String label;
 
-    public ButtonEditor1(JCheckBox checkBox,JButton refreshButton) {
+    public ButtonEditor2(JCheckBox checkBox,JButton refreshButton) {
         super(checkBox);
         button = new JButton();
         button.setOpaque(true);
@@ -158,7 +162,11 @@ class ButtonEditor1 extends DefaultCellEditor {
         label = value.toString();
         button.setText(label);
 
-        new EditCurrentUserPage(GetCredentialsFromDatabase().get(row));
+        Reservation reservation=GetReservationsFromDatabase().get(0);
+        for(Reservation everyReservation:GetReservationsFromDatabase()){
+            if(everyReservation.id==Integer.parseInt(table.getValueAt(row,0).toString())){reservation=everyReservation;break;}
+        }
+        new EditCurrentReservationPage(reservation);
 
         refreshButton.doClick();
         return button;

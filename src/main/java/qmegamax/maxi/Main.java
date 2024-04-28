@@ -1,11 +1,8 @@
 package main.java.qmegamax.maxi;
 
-import main.java.qmegamax.maxi.pages.EditReservationPage;
-import main.java.qmegamax.maxi.pages.PendingReservationsPage;
 import main.java.qmegamax.maxi.pages.errors.ConfigReadErrorPage;
 import main.java.qmegamax.maxi.pages.LoginPage;
 import main.java.qmegamax.maxi.pages.errors.ConnectionErrorPage;
-import main.java.qmegamax.maxi.pages.errors.LognErrorPage;
 
 import java.io.File;
 import java.sql.Connection;
@@ -14,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
@@ -131,7 +127,7 @@ public class Main {
                 reservations.add(new Reservation(resultSet.getInt(1),resultSet.getObject(2,LocalDateTime.class),resultSet.getString(3),resultSet.getString(4),resultSet.getInt(5)));
             }
         }
-        catch (Exception ex) {System.out.println(ex);}
+        catch (Exception ex) {System.out.println("uhoh");}
 
         return reservations;
     }
@@ -147,9 +143,43 @@ public class Main {
                 reservations.add(new Reservation(resultSet.getInt(1),resultSet.getObject(2,LocalDateTime.class),resultSet.getString(3),resultSet.getString(4),resultSet.getInt(5)));
             }
         }
-        catch (Exception ex) {System.out.println(ex);}
+        catch (Exception ex) {System.out.println("uhoh");}
 
         return reservations;
+    }
+
+    public static String encryptPassword(String password,String key){
+        String newPassword=password;
+
+        int keyAsInt=0;
+        for(int i=0;i<key.length();i++){
+            keyAsInt+=key.charAt(i)+i;
+        }
+
+        char[] newPasswordChars = newPassword.toCharArray();
+        for(int i=0;i<password.length();i++){
+            newPasswordChars[i]=(char)(password.charAt(i)+keyAsInt);
+        }
+        newPassword=String.valueOf(newPasswordChars);
+
+        return newPassword;
+    }
+
+    public static String decryptPassword(String password,String key){
+        String newPassword=password;
+
+        int keyAsInt=0;
+        for(int i=0;i<key.length();i++){
+            keyAsInt+=key.charAt(i)+i;
+        }
+
+        char[] newPasswordChars = newPassword.toCharArray();
+        for(int i=0;i<password.length();i++){
+            newPasswordChars[i]=(char)(password.charAt(i)-keyAsInt);
+        }
+        newPassword=String.valueOf(newPasswordChars);
+
+        return newPassword;
     }
 
     public static void main(String[] args) {
