@@ -1,6 +1,6 @@
 package main.java.qmegamax.maxi.pages;
 
-import main.java.qmegamax.maxi.Credential;
+import main.java.qmegamax.maxi.util.Credential;
 import main.java.qmegamax.maxi.Main;
 import main.java.qmegamax.maxi.pages.errors.LognErrorPage;
 
@@ -8,8 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Objects;
 
 import static main.java.qmegamax.maxi.Main.*;

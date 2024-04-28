@@ -1,6 +1,6 @@
 package main.java.qmegamax.maxi.pages;
 
-import main.java.qmegamax.maxi.Reservation;
+import main.java.qmegamax.maxi.util.Reservation;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

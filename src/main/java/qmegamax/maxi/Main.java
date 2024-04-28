@@ -3,6 +3,8 @@ package main.java.qmegamax.maxi;
 import main.java.qmegamax.maxi.pages.errors.ConfigReadErrorPage;
 import main.java.qmegamax.maxi.pages.LoginPage;
 import main.java.qmegamax.maxi.pages.errors.ConnectionErrorPage;
+import main.java.qmegamax.maxi.util.Credential;
+import main.java.qmegamax.maxi.util.Reservation;
 
 import java.io.File;
 import java.sql.Connection;

@@ -1,7 +1,6 @@
 package main.java.qmegamax.maxi.pages;
 
-import main.java.qmegamax.maxi.Credential;
-import main.java.qmegamax.maxi.Reservation;
+import main.java.qmegamax.maxi.util.Credential;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,7 +13,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import static main.java.qmegamax.maxi.Main.*;
-import static main.java.qmegamax.maxi.Main.GetReservationsFromDatabase;
 
 public class EditCredentialsPage extends JFrame{
     JButton refreshButton;

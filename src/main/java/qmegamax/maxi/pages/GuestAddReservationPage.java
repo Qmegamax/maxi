@@ -1,8 +1,8 @@
 package main.java.qmegamax.maxi.pages;
 
 import com.toedter.calendar.JDateChooser;
-import main.java.qmegamax.maxi.DocumentSizeFilter;
-import main.java.qmegamax.maxi.Reservation;
+import main.java.qmegamax.maxi.util.DocumentSizeFilter;
+import main.java.qmegamax.maxi.util.Reservation;
 import main.java.qmegamax.maxi.pages.errors.AddingReservationErrorPage;
 
 import javax.swing.*;

@@ -1,4 +1,4 @@
-package main.java.qmegamax.maxi;
+package main.java.qmegamax.maxi.util;
 
 public class Credential {
     public static enum AccountType {

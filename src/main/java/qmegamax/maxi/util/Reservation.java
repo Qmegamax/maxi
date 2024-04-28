@@ -1,4 +1,4 @@
-package main.java.qmegamax.maxi;
+package main.java.qmegamax.maxi.util;
 
 import java.sql.Date;
 import java.time.LocalDateTime;

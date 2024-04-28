@@ -1,7 +1,7 @@
 package main.java.qmegamax.maxi.pages;
 
-import main.java.qmegamax.maxi.Credential;
-import main.java.qmegamax.maxi.DocumentSizeFilter;
+import main.java.qmegamax.maxi.util.Credential;
+import main.java.qmegamax.maxi.util.DocumentSizeFilter;
 import main.java.qmegamax.maxi.pages.errors.AddingReservationErrorPage;
 
 import javax.swing.*;
@@ -10,11 +10,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.text.AbstractDocument;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 import static main.java.qmegamax.maxi.Main.*;
 

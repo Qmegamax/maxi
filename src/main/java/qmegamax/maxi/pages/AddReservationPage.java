@@ -2,8 +2,8 @@ package main.java.qmegamax.maxi.pages;
 
 
 import com.toedter.calendar.JDateChooser;
-import main.java.qmegamax.maxi.DocumentSizeFilter;
-import main.java.qmegamax.maxi.Reservation;
+import main.java.qmegamax.maxi.util.DocumentSizeFilter;
+import main.java.qmegamax.maxi.util.Reservation;
 import main.java.qmegamax.maxi.pages.errors.AddingReservationErrorPage;
 
 import javax.swing.*;
@@ -13,8 +13,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.DateFormatter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.PreparedStatement;
@@ -24,7 +22,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static main.java.qmegamax.maxi.Main.*;
-import static main.java.qmegamax.maxi.Main.GetPendingReservationsFromDatabase;
 
 public class AddReservationPage extends JFrame{
 
