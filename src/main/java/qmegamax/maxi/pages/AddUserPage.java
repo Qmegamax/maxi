@@ -42,7 +42,6 @@ public class AddUserPage extends JFrame{
 
         JTextField textField1 = new JTextField("username",12);
         AbstractDocument abstractDocument1=(AbstractDocument)textField1.getDocument();
-
         abstractDocument1.setDocumentFilter(new DocumentSizeFilter(30));
         textField1.addMouseListener(new MouseListener() {
             @Override
@@ -55,8 +54,6 @@ public class AddUserPage extends JFrame{
         box.add(textField1,gbc);
 
         JTextField textField2 = new JTextField("email",12);
-        AbstractDocument abstractDocument2=(AbstractDocument)textField2.getDocument();
-
         abstractDocument1.setDocumentFilter(new DocumentSizeFilter(20));
         textField2.addMouseListener(new MouseListener() {
             @Override
@@ -108,7 +105,7 @@ public class AddUserPage extends JFrame{
                         + " values (?, ?, ?, ?, ?)";
 
                 PreparedStatement preparedStmt = CONNECTION.prepareStatement(sql);
-                ArrayList<Credential> credentials=GetCredentialsFromDatabase();
+                ArrayList<Credential> credentials=GetDataFromDatabase("credentials",Credential.getEmpty());
                 preparedStmt.setInt (1, credentials.isEmpty()?1:credentials.get(credentials.size()-1).id+1);
                 preparedStmt.setString (2, name);
                 preparedStmt.setString (3, email);
@@ -117,8 +114,9 @@ public class AddUserPage extends JFrame{
 
                 preparedStmt.execute();
 
-            }catch (Exception ex) {System.out.println(ex);}
+            }catch (Exception ex) {System.out.println("uhoh");}
 
+            EditCredentialsPage.current.refreshButton.doClick();
             frame.setVisible(false);
             frame.dispose();
         });

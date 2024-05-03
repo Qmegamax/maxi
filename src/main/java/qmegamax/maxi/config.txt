@@ -17,7 +17,7 @@ databaseUser=root
 #Database password
 databasePassword=tupaparola
 #Does the code incrypt passwords
-useEncryption=false
+useEncryption=true
 #The key for decoding(seed). WARNING: SET THIS ON THE FIRST LAUNCH AND DO NOT CHANGE
 encryptionKey=qwerty
 #Opening hour

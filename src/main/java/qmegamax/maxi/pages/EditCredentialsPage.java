@@ -1,10 +1,10 @@
 package main.java.qmegamax.maxi.pages;
 
+import main.java.qmegamax.maxi.util.ButtonRenderer;
 import main.java.qmegamax.maxi.util.Credential;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import static main.java.qmegamax.maxi.Main.*;
 
 public class EditCredentialsPage extends JFrame{
+    public static EditCredentialsPage current;
     JButton refreshButton;
 
     public EditCredentialsPage(){
@@ -62,7 +63,7 @@ public class EditCredentialsPage extends JFrame{
         table1.getColumnModel().getColumn(3).setPreferredWidth(100);
         table1.getColumnModel().getColumn(4).setPreferredWidth(10);
         table1.getColumnModel().getColumn(5).setPreferredWidth(20);
-        table1.getColumn("Edit").setCellRenderer(new ButtonRenderer1());
+        table1.getColumn("Edit").setCellRenderer(new ButtonRenderer());
         table1.getColumn("Edit").setCellEditor(
                 new ButtonEditor1(new JCheckBox(),refreshButton));
         JScrollPane scrollPane1 = new JScrollPane(table1);
@@ -70,7 +71,7 @@ public class EditCredentialsPage extends JFrame{
         panel.add(scrollPane1,gbc);
 
         refreshButton.addActionListener(e -> {
-            ArrayList<Credential> credentials=GetCredentialsFromDatabase();
+            ArrayList<Credential> credentials=GetDataFromDatabase("credentials",Credential.getEmpty());
 
             int currentRow=0;
             DefaultTableModel resetModel = (DefaultTableModel) table1.getModel();
@@ -113,28 +114,9 @@ public class EditCredentialsPage extends JFrame{
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
+        current=this;
     }
 }
-
-class ButtonRenderer1 extends JButton implements TableCellRenderer {
-
-    public ButtonRenderer1() {
-        setOpaque(true);
-    }
-
-    public Component getTableCellRendererComponent(JTable table, Object value,boolean isSelected, boolean hasFocus, int row, int column) {
-        if (isSelected) {
-            setForeground(table.getSelectionForeground());
-            setBackground(table.getSelectionBackground());
-        } else {
-            setForeground(table.getForeground());
-            setBackground(UIManager.getColor("Button.background"));
-        }
-        setText((value == null) ? "" : value.toString());
-        return this;
-    }
-}
-
 class ButtonEditor1 extends DefaultCellEditor {
     protected JButton button;
     protected JButton refreshButton;
@@ -156,7 +138,7 @@ class ButtonEditor1 extends DefaultCellEditor {
         label = value.toString();
         button.setText(label);
 
-        new EditCurrentUserPage(GetCredentialsFromDatabase().get(row));
+        new EditCurrentCredentialPage(GetDataFromDatabase("credentials",Credential.getEmpty()).get(row));
 
         refreshButton.doClick();
         return button;

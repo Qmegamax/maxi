@@ -1,5 +1,6 @@
 package main.java.qmegamax.maxi.pages;
 
+import main.java.qmegamax.maxi.util.ButtonRenderer;
 import main.java.qmegamax.maxi.util.Reservation;
 
 import javax.swing.*;
@@ -16,13 +17,13 @@ import java.util.ArrayList;
 
 import static main.java.qmegamax.maxi.Main.*;
 
-public class ConfirmReservationsPage extends JFrame{
+public class ConfirmReservationsPage extends JFrame {
 
     JButton refreshButton;
 
-    public ConfirmReservationsPage(){
+    public ConfirmReservationsPage() {
         this.setTitle("Confirm reservations");
-        ImageIcon img = new ImageIcon(PATH+"icon.png");
+        ImageIcon img = new ImageIcon(PATH + "icon.png");
         this.setIconImage(img.getImage());
 
         JPanel panel = new JPanel();
@@ -31,14 +32,16 @@ public class ConfirmReservationsPage extends JFrame{
         gbc.gridwidth = GridBagConstraints.REMAINDER;
 
         JPanel subPanel = new JPanel(new GridBagLayout());
-        panel.add(subPanel,gbc);
+        panel.add(subPanel, gbc);
 
         JLabel label1 = new JLabel("Pending reservations:");
         subPanel.add(label1);
 
-        DefaultTableModel defaultTableModel=new DefaultTableModel() {
+        DefaultTableModel defaultTableModel = new DefaultTableModel() {
             @Override
-            public boolean isCellEditable(int row, int column) {return column==5 || column==6;}
+            public boolean isCellEditable(int row, int column) {
+                return column == 5 || column == 6;
+            }
         };
         defaultTableModel.addColumn("Id");
         defaultTableModel.addColumn("Time");
@@ -50,11 +53,10 @@ public class ConfirmReservationsPage extends JFrame{
 
         refreshButton = new JButton("Refresh");
 
-        JTable table1 = new JTable(defaultTableModel){
-            public String getToolTipText( MouseEvent e )
-            {
-                int row = rowAtPoint( e.getPoint() );
-                int column = columnAtPoint( e.getPoint() );
+        JTable table1 = new JTable(defaultTableModel) {
+            public String getToolTipText(MouseEvent e) {
+                int row = rowAtPoint(e.getPoint());
+                int column = columnAtPoint(e.getPoint());
 
                 Object value = getValueAt(row, column);
                 return value == null ? null : value.toString();
@@ -69,48 +71,48 @@ public class ConfirmReservationsPage extends JFrame{
         table1.getColumnModel().getColumn(6).setPreferredWidth(20);
         table1.getColumn("Confirm").setCellRenderer(new ButtonRenderer());
         table1.getColumn("Confirm").setCellEditor(
-                new ButtonEditor(new JCheckBox(),refreshButton));
+                new ButtonEditor(new JCheckBox(), refreshButton));
         table1.getColumn("Deny").setCellRenderer(new ButtonRenderer());
         table1.getColumn("Deny").setCellEditor(
-                new ButtonEditor(new JCheckBox(),refreshButton));
+                new ButtonEditor(new JCheckBox(), refreshButton));
         JScrollPane scrollPane1 = new JScrollPane(table1);
-        scrollPane1.setPreferredSize(new Dimension(740,800));
-        panel.add(scrollPane1,gbc);
+        scrollPane1.setPreferredSize(new Dimension(740, 800));
+        panel.add(scrollPane1, gbc);
 
         refreshButton.addActionListener(e -> {
-                ArrayList<Reservation> reservations=GetPendingReservationsFromDatabase();
+            ArrayList<Reservation> reservations = GetDataFromDatabase("pendingReservations",Reservation.getEmpty());
 
-                reservations.sort((d1,d2) -> d1.date.compareTo(d2.date));
+            reservations.sort((d1, d2) -> d1.date.compareTo(d2.date));
 
-                int currentRow=0;
-                DefaultTableModel resetModel = (DefaultTableModel) table1.getModel();
-                resetModel.setRowCount(0);
-                for(Reservation reservation:reservations) {
+            int currentRow = 0;
+            DefaultTableModel resetModel = (DefaultTableModel) table1.getModel();
+            resetModel.setRowCount(0);
+            for (Reservation reservation : reservations) {
 
-                    if (table1.getRowCount() < currentRow + 1) {
-                        TableModel model = table1.getModel();
-                        DefaultTableModel defaultTableModel1 = (DefaultTableModel) model;
-                        defaultTableModel1.addRow(new Object[]{"-","-", "-", "-", "-", "Confirm", "Deny"});
-                    }
-
-                    table1.setValueAt(reservation.id, currentRow, 0);
-                    table1.setValueAt(reservation.date.toString(), currentRow, 1);
-                    table1.setValueAt(reservation.name, currentRow, 2);
-                    table1.setValueAt(reservation.notes, currentRow, 3);
-                    table1.setValueAt(String.valueOf(reservation.table), currentRow, 4);
-                    currentRow++;
+                if (table1.getRowCount() < currentRow + 1) {
+                    TableModel model = table1.getModel();
+                    DefaultTableModel defaultTableModel1 = (DefaultTableModel) model;
+                    defaultTableModel1.addRow(new Object[]{"-", "-", "-", "-", "-", "Confirm", "Deny"});
                 }
+
+                table1.setValueAt(reservation.id, currentRow, 0);
+                table1.setValueAt(reservation.date.toString(), currentRow, 1);
+                table1.setValueAt(reservation.name, currentRow, 2);
+                table1.setValueAt(reservation.notes, currentRow, 3);
+                table1.setValueAt(String.valueOf(reservation.table), currentRow, 4);
+                currentRow++;
+            }
         });
-        panel.add(refreshButton,gbc);
+        panel.add(refreshButton, gbc);
 
         JButton btnNewButton = new JButton("Edit credentials");
-        JFrame frame=this;
+        JFrame frame = this;
         btnNewButton.addActionListener(e -> {
             new EditCredentialsPage();
             frame.setVisible(false);
             frame.dispose();
         });
-        panel.add(btnNewButton,gbc);
+        panel.add(btnNewButton, gbc);
 
         JButton btnNewButton_1 = new JButton("Edit reservations");
         btnNewButton_1.addActionListener(e -> {
@@ -118,33 +120,13 @@ public class ConfirmReservationsPage extends JFrame{
             frame.setVisible(false);
             frame.dispose();
         });
-        panel.add(btnNewButton_1,gbc);
+        panel.add(btnNewButton_1, gbc);
 
         this.add(panel);
-        this.setSize(860,1200);
+        this.setSize(860, 1200);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
-    }
-}
-
-class ButtonRenderer extends JButton implements TableCellRenderer {
-
-    public ButtonRenderer() {
-        setOpaque(true);
-    }
-
-    public Component getTableCellRendererComponent(JTable table, Object value,
-                                                   boolean isSelected, boolean hasFocus, int row, int column) {
-        if (isSelected) {
-            setForeground(table.getSelectionForeground());
-            setBackground(table.getSelectionBackground());
-        } else {
-            setForeground(table.getForeground());
-            setBackground(UIManager.getColor("Button.background"));
-        }
-        setText((value == null) ? "" : value.toString());
-        return this;
     }
 }
 
@@ -183,7 +165,7 @@ class ButtonEditor extends DefaultCellEditor {
                         + " values (?, ?, ?, ?, ?)";
 
                 PreparedStatement preparedStmt = CONNECTION.prepareStatement(sql);
-                ArrayList<Reservation> reservations=GetReservationsFromDatabase();
+                ArrayList<Reservation> reservations=GetDataFromDatabase("reservations",Reservation.getEmpty());
                 preparedStmt.setInt (1, reservations.isEmpty()?1:reservations.get(reservations.size()-1).id+1);
                 preparedStmt.setString (2, table.getValueAt(row,1).toString());
                 preparedStmt.setString   (3, table.getValueAt(row,2).toString());

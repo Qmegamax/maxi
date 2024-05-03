@@ -1,6 +1,9 @@
 package main.java.qmegamax.maxi.util;
 
-public class Credential {
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class Credential extends DatabaseRow {
     public static enum AccountType {
         USER,ADMIN
     }
@@ -16,6 +19,17 @@ public class Credential {
         this.email=email;
         this.password=password;
         this.type=AccountType.valueOf(type);
+    }
 
+    public static Credential getEmpty(){
+        return new Credential(0,null,null,null,"USER");
+    }
+
+    public Credential insert(ResultSet resultSet){
+        try {
+            return new Credential(resultSet.getInt(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getString(5));
+        } catch (SQLException ignored) {}
+
+        return null;
     }
 }

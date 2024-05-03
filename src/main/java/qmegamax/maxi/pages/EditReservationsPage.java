@@ -1,5 +1,6 @@
 package main.java.qmegamax.maxi.pages;
 
+import main.java.qmegamax.maxi.util.ButtonRenderer;
 import main.java.qmegamax.maxi.util.Reservation;
 
 import javax.swing.*;
@@ -13,10 +14,10 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import static main.java.qmegamax.maxi.Main.*;
-import static main.java.qmegamax.maxi.Main.GetReservationsFromDatabase;
 
 public class EditReservationsPage extends JFrame{
 
+    public static EditReservationsPage current;
     JButton refreshButton;
 
     public EditReservationsPage(){
@@ -64,7 +65,7 @@ public class EditReservationsPage extends JFrame{
         table1.getColumnModel().getColumn(3).setPreferredWidth(100);
         table1.getColumnModel().getColumn(4).setPreferredWidth(10);
         table1.getColumnModel().getColumn(5).setPreferredWidth(20);
-        table1.getColumn("Edit").setCellRenderer(new ButtonRenderer2());
+        table1.getColumn("Edit").setCellRenderer(new ButtonRenderer());
         table1.getColumn("Edit").setCellEditor(
                 new ButtonEditor2(new JCheckBox(),refreshButton));
         JScrollPane scrollPane1 = new JScrollPane(table1);
@@ -72,7 +73,7 @@ public class EditReservationsPage extends JFrame{
         panel.add(scrollPane1,gbc);
 
         refreshButton.addActionListener(e -> {
-            ArrayList<Reservation> reservations=GetReservationsFromDatabase();
+            ArrayList<Reservation> reservations=GetDataFromDatabase("reservations",Reservation.getEmpty());
 
             reservations.sort((d1,d2) -> d1.date.compareTo(d2.date));
 
@@ -97,48 +98,29 @@ public class EditReservationsPage extends JFrame{
         });
         panel.add(refreshButton,gbc);
 
-        JButton btnNewButton1 = new JButton("Add a reservation");
-        btnNewButton1.addActionListener(e -> {
+        JButton button1 = new JButton("Add a reservation");
+        button1.addActionListener(e -> {
             new AddReservationPage(false);
         });
-        panel.add(btnNewButton1,gbc);
+        panel.add(button1,gbc);
 
-        JButton btnNewButton = new JButton("Back");
+        JButton button2 = new JButton("Back");
         JFrame frame=this;
-        btnNewButton.addActionListener(e -> {
+        button2.addActionListener(e -> {
             new ConfirmReservationsPage();
             frame.setVisible(false);
             frame.dispose();
         });
-        panel.add(btnNewButton,gbc);
+        panel.add(button2,gbc);
 
         this.add(panel);
         this.setSize(800,1200);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
+        current=this;
     }
 }
-
-class ButtonRenderer2 extends JButton implements TableCellRenderer {
-
-    public ButtonRenderer2() {
-        setOpaque(true);
-    }
-
-    public Component getTableCellRendererComponent(JTable table, Object value,boolean isSelected, boolean hasFocus, int row, int column) {
-        if (isSelected) {
-            setForeground(table.getSelectionForeground());
-            setBackground(table.getSelectionBackground());
-        } else {
-            setForeground(table.getForeground());
-            setBackground(UIManager.getColor("Button.background"));
-        }
-        setText((value == null) ? "" : value.toString());
-        return this;
-    }
-}
-
 class ButtonEditor2 extends DefaultCellEditor {
     protected JButton button;
     protected JButton refreshButton;
@@ -160,8 +142,8 @@ class ButtonEditor2 extends DefaultCellEditor {
         label = value.toString();
         button.setText(label);
 
-        Reservation reservation=GetReservationsFromDatabase().get(0);
-        for(Reservation everyReservation:GetReservationsFromDatabase()){
+        Reservation reservation=GetDataFromDatabase("reservations",Reservation.getEmpty()).get(0);
+        for(Reservation everyReservation:GetDataFromDatabase("reservations",Reservation.getEmpty())){
             if(everyReservation.id==Integer.parseInt(table.getValueAt(row,0).toString())){reservation=everyReservation;break;}
         }
         new EditCurrentReservationPage(reservation);

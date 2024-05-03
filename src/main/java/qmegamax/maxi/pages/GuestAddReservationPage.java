@@ -19,7 +19,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static main.java.qmegamax.maxi.Main.*;
-import static main.java.qmegamax.maxi.Main.GetPendingReservationsFromDatabase;
 
 public class GuestAddReservationPage extends JFrame{
     public boolean capchaCompeted;
@@ -145,8 +144,8 @@ public class GuestAddReservationPage extends JFrame{
             String notes=textArea.getText();
             int tableId=(Integer) spinner2.getValue();
 
-            ArrayList<Reservation> currentReservations=GetPendingReservationsFromDatabase();
-            currentReservations.addAll(GetReservationsFromDatabase());
+            ArrayList<Reservation> currentReservations=GetDataFromDatabase("pendingReservations",Reservation.getEmpty());
+            currentReservations.addAll(GetDataFromDatabase("reservations",Reservation.getEmpty()));
             for(Reservation reservation:currentReservations){
                 LocalDateTime date1 = reservation.date;
                 Date date2 = dateChooser.getDate();
@@ -161,7 +160,7 @@ public class GuestAddReservationPage extends JFrame{
                         + " values (?, ?, ?, ?, ?)";
 
                 PreparedStatement preparedStmt = CONNECTION.prepareStatement(sql);
-                ArrayList<Reservation> reservations=GetPendingReservationsFromDatabase();
+                ArrayList<Reservation> reservations=GetDataFromDatabase("pendingReservations",Reservation.getEmpty());
                 preparedStmt.setInt (1, reservations.isEmpty()?1:reservations.get(reservations.size()-1).id+1);
                 preparedStmt.setString (2, date.toString().split("T")[0]+" "+date.toString().split("T")[1]);
                 preparedStmt.setString   (3, name);

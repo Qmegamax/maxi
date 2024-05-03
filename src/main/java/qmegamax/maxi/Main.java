@@ -4,6 +4,7 @@ import main.java.qmegamax.maxi.pages.errors.ConfigReadErrorPage;
 import main.java.qmegamax.maxi.pages.LoginPage;
 import main.java.qmegamax.maxi.pages.errors.ConnectionErrorPage;
 import main.java.qmegamax.maxi.util.Credential;
+import main.java.qmegamax.maxi.util.DatabaseRow;
 import main.java.qmegamax.maxi.util.Reservation;
 
 import java.io.File;
@@ -102,20 +103,20 @@ public class Main {
         return true;
     }
 
-    public static ArrayList<Credential> GetCredentialsFromDatabase(){
-        ArrayList<Credential> credentials = new ArrayList<>();
+    public static <T extends DatabaseRow> ArrayList<T> GetDataFromDatabase(String databaseName,T rowClass){
+        ArrayList<DatabaseRow> arrayList = new ArrayList<>();
 
         try{
             Statement statement = CONNECTION.createStatement();
-            ResultSet resultSet = statement.executeQuery("select userId, name, email, password, type from credentials");
+            ResultSet resultSet = statement.executeQuery("select * from "+databaseName);
 
             while (resultSet.next()) {
-                credentials.add(new Credential(resultSet.getInt(1),resultSet.getString(2),resultSet.getString(3),resultSet.getString(4),resultSet.getString(5)));
+                arrayList.add(rowClass.insert(resultSet));
             }
         }
-        catch (Exception ex) {System.out.println("uhoh");}
+        catch (Exception ignored) {}
 
-        return  credentials;
+        return (ArrayList<T>) arrayList;
     }
 
     public static ArrayList<Reservation> GetReservationsFromDatabase(){
@@ -124,22 +125,6 @@ public class Main {
         try{
             Statement statement = CONNECTION.createStatement();
             ResultSet resultSet = statement.executeQuery("select reservationId, time, name, notes, tableId from reservations");
-
-            while (resultSet.next()) {
-                reservations.add(new Reservation(resultSet.getInt(1),resultSet.getObject(2,LocalDateTime.class),resultSet.getString(3),resultSet.getString(4),resultSet.getInt(5)));
-            }
-        }
-        catch (Exception ex) {System.out.println("uhoh");}
-
-        return reservations;
-    }
-
-    public static ArrayList<Reservation> GetPendingReservationsFromDatabase(){
-        ArrayList<Reservation> reservations = new ArrayList<>();
-
-        try{
-            Statement statement = CONNECTION.createStatement();
-            ResultSet resultSet = statement.executeQuery("select reservationId, time, name, notes, tableId from pendingReservations");
 
             while (resultSet.next()) {
                 reservations.add(new Reservation(resultSet.getInt(1),resultSet.getObject(2,LocalDateTime.class),resultSet.getString(3),resultSet.getString(4),resultSet.getInt(5)));
@@ -185,10 +170,10 @@ public class Main {
     }
 
     public static void main(String[] args) {
+
         File file = new File("Main.java");
         String filePath=file.getAbsolutePath();
         PATH=(filePath.split("Main.java")[0]+"\\src\\main\\java\\qmegamax\\maxi\\");
-        System.out.println(filePath.split("Main.java")[0]);
 
         if(!getConfig())return;
 

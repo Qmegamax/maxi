@@ -15,9 +15,9 @@ import java.sql.SQLException;
 
 import static main.java.qmegamax.maxi.Main.*;
 
-public class EditCurrentUserPage extends JFrame
+public class EditCurrentCredentialPage extends JFrame
 {
-    public EditCurrentUserPage(Credential credential){
+    public EditCurrentCredentialPage(Credential credential){
         this.setTitle("Add a user");
         ImageIcon img = new ImageIcon(PATH+"icon.png");
         this.setIconImage(img.getImage());
@@ -91,6 +91,7 @@ public class EditCurrentUserPage extends JFrame
 
             }catch (Exception ex) {System.out.println(ex);}
 
+            EditCredentialsPage.current.refreshButton.doClick();
             frame.setVisible(false);
             frame.dispose();
         });
@@ -106,6 +107,7 @@ public class EditCurrentUserPage extends JFrame
 
             } catch (SQLException ex) {System.out.println("uhoh");}
 
+            EditCredentialsPage.current.refreshButton.doClick();
             frame.setVisible(false);
             frame.dispose();
         });

@@ -88,7 +88,7 @@ public class LoginPage extends JFrame {
             String password = textField2.getText();
 
             boolean foundMatch = false;
-            for (Credential credential : Main.GetCredentialsFromDatabase()) {
+            for (Credential credential : Main.GetDataFromDatabase("credentials",Credential.getEmpty())) {
                 if (Objects.equals(credential.name, username) && Objects.equals(USEENCRYPTION?decryptPassword(credential.password,ENCRYPTIONKEY):credential.password, password)) {
 
                     if (credential.type == Credential.AccountType.USER) {

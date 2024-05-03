@@ -20,7 +20,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static main.java.qmegamax.maxi.Main.*;
-import static main.java.qmegamax.maxi.Main.GetPendingReservationsFromDatabase;
 
 public class EditCurrentReservationPage extends JFrame{
     public EditCurrentReservationPage(Reservation reservation){
@@ -124,8 +123,8 @@ public class EditCurrentReservationPage extends JFrame{
             String notes=textArea.getText();
             int tableId=(Integer) spinner2.getValue();
 
-            ArrayList<Reservation> currentReservations=GetReservationsFromDatabase();
-            currentReservations.addAll(GetPendingReservationsFromDatabase());
+            ArrayList<Reservation> currentReservations=GetDataFromDatabase("reservation",Reservation.getEmpty());
+            currentReservations.addAll(GetDataFromDatabase("pendingReservations",Reservation.getEmpty()));
             for(Reservation everyReservation:currentReservations){
                 if(everyReservation.id==reservation.id)continue;
 
@@ -151,6 +150,7 @@ public class EditCurrentReservationPage extends JFrame{
 
             }catch (Exception ex) {System.out.println("uhoh");}
 
+            EditReservationsPage.current.refreshButton.doClick();
             frame.setVisible(false);
             frame.dispose();
         });
@@ -166,6 +166,7 @@ public class EditCurrentReservationPage extends JFrame{
 
             } catch (SQLException ex) {System.out.println("uhoh");}
 
+            EditReservationsPage.current.refreshButton.doClick();
             frame.setVisible(false);
             frame.dispose();
         });
