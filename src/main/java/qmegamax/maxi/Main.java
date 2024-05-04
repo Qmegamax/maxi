@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Main {
@@ -37,63 +38,25 @@ public class Main {
         try {
             File myObj = new File(PATH+"config.txt");
             Scanner sc = new Scanner(myObj);
-            int completedChecks=0;
+            HashMap<String,String> configs = new HashMap<>();
 
             while (sc.hasNextLine()) {
-                if (completedChecks == 0) completedChecks++;
                 String data = sc.nextLine();
-
-                if (data.split("=")[0].equals("tableAmount")) {
-                    TABLEAMOUNT = Integer.parseInt(data.split("=")[1]);
-                    completedChecks++;
-                }
-                if (data.split("=")[0].equals("occupationTime")) {
-                    OCUPATIONTIME = Integer.parseInt(data.split("=")[1]);
-                    completedChecks++;
-                }
-                if (data.split("=")[0].equals("chairAmount")) {
-                    CHAIRAMOUNT = Integer.parseInt(data.split("=")[1]);
-                    completedChecks++;
-                }
-                if (data.split("=")[0].equals("areGuestsAllowed")) {
-                    AREGUESTSALLOWED = Boolean.parseBoolean(data.split("=")[1]);
-                    completedChecks++;
-                }
-                if (data.split("=")[0].equals("capchaAmount")) {
-                    CAPCHAAMOUNT = Integer.parseInt(data.split("=")[1]);
-                    completedChecks++;
-                }
-                if (data.split("=")[0].equals("databaseIp")) {
-                    DATABASEIP = data.split("=")[1];
-                    completedChecks++;
-                }
-                if (data.split("=")[0].equals("databaseUser")) {
-                    DATABASEUSER = data.split("=")[1];
-                    completedChecks++;
-                }
-                if (data.split("=")[0].equals("databasePassword")) {
-                    DATABASEPASSWORD = data.split("=")[1];
-                    completedChecks++;
-                }
-                if (data.split("=")[0].equals("useEncryption")) {
-                    USEENCRYPTION = Boolean.parseBoolean(data.split("=")[1]);
-                    completedChecks++;
-                }
-                if (data.split("=")[0].equals("encryptionKey")) {
-                    ENCRYPTIONKEY = data.split("=")[1];
-                    completedChecks++;
-                }
-                if (data.split("=")[0].equals("openingHour")) {
-                    OPENINGHOUR = Integer.parseInt(data.split("=")[1]);
-                    completedChecks++;
-                }
-                if (data.split("=")[0].equals("closingHour")) {
-                    CLOSINGHOUR = Integer.parseInt(data.split("=")[1]);
-                    completedChecks++;
-                }
+                if(!data.startsWith("#"))configs.put(data.split("=")[0],data.split("=")[1]);
             }
 
-            if(completedChecks!=13) {throw new Exception();}
+            TABLEAMOUNT = Integer.parseInt(configs.get("tableAmount"));
+            OCUPATIONTIME = Integer.parseInt(configs.get("occupationTime"));
+            CHAIRAMOUNT = Integer.parseInt(configs.get("chairAmount"));
+            AREGUESTSALLOWED = Boolean.parseBoolean(configs.get("areGuestsAllowed"));
+            CAPCHAAMOUNT = Integer.parseInt(configs.get("capchaAmount"));
+            DATABASEIP = configs.get("databaseIp");
+            DATABASEUSER = configs.get("databaseUser");
+            DATABASEPASSWORD = configs.get("databasePassword");
+            USEENCRYPTION = Boolean.parseBoolean(configs.get("useEncryption"));
+            ENCRYPTIONKEY = configs.get("encryptionKey");
+            OPENINGHOUR = Integer.parseInt(configs.get("openingHour"));
+            CLOSINGHOUR = Integer.parseInt(configs.get("closingHour"));
 
             sc.close();
         } catch (Exception e) {
@@ -178,7 +141,6 @@ public class Main {
         if(!getConfig())return;
 
         try {
-           // Class.forName("com.mysql.cj.jdbc.Driver");
             CONNECTION = DriverManager.getConnection("jdbc:mysql://"+DATABASEIP,DATABASEUSER, DATABASEPASSWORD);
         }
         catch (Exception e) {

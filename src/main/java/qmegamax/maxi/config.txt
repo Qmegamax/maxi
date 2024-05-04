@@ -1,4 +1,4 @@
-rgmkrgkmrtb
+#rgmkrgkmrtb
 #gvrgtbtbt
 #Sets how many tables there are.
 tableAmount=10
