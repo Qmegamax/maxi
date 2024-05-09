@@ -151,7 +151,7 @@ public class CapchaPage extends JFrame{
         contentPanel.add(btnNewButton_2,gbc);
 
         this.add(panel);
-        this.setSize(360,300);
+        this.setSize(400,360);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
