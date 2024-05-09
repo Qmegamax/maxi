@@ -1,6 +1,7 @@
 package main.java.qmegamax.maxi.pages;
 
 
+import main.java.qmegamax.maxi.Main;
 import main.java.qmegamax.maxi.util.Credential;
 import main.java.qmegamax.maxi.util.DocumentSizeFilter;
 import main.java.qmegamax.maxi.pages.errors.AddingReservationErrorPage;
@@ -22,8 +23,7 @@ public class AddUserPage extends JFrame{
 
     public AddUserPage(){
         this.setTitle("Add a user");
-        ImageIcon img = new ImageIcon(PATH+"icon.png");
-        this.setIconImage(img.getImage());
+        Main.setImage(this);
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());

@@ -1,5 +1,6 @@
 package main.java.qmegamax.maxi;
 
+import main.java.qmegamax.maxi.pages.CapchaPage;
 import main.java.qmegamax.maxi.pages.errors.ConfigReadErrorPage;
 import main.java.qmegamax.maxi.pages.LoginPage;
 import main.java.qmegamax.maxi.pages.errors.ConnectionErrorPage;
@@ -7,7 +8,9 @@ import main.java.qmegamax.maxi.util.Credential;
 import main.java.qmegamax.maxi.util.DatabaseRow;
 import main.java.qmegamax.maxi.util.Reservation;
 
-import java.io.File;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -34,14 +37,19 @@ public class Main {
     public static int OPENINGHOUR;
     public static int CLOSINGHOUR;
 
+    public static void setImage(JFrame frame){
+        try {
+            frame.setIconImage(ImageIO.read(CapchaPage.class.getClassLoader().getResourceAsStream("main/java/qmegamax/maxi/icon.png")));
+        } catch (IOException ignored) {}
+    }
+
     public static boolean getConfig(){
         try {
-            File myObj = new File(PATH+"config.txt");
-            Scanner sc = new Scanner(myObj);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(Main.class.getClassLoader().getResourceAsStream("main/config.txt")));
+
             HashMap<String,String> configs = new HashMap<>();
 
-            while (sc.hasNextLine()) {
-                String data = sc.nextLine();
+            for (String data; (data = reader.readLine()) != null;) {
                 if(!data.startsWith("#"))configs.put(data.split("=")[0],data.split("=")[1]);
             }
 
@@ -58,9 +66,10 @@ public class Main {
             OPENINGHOUR = Integer.parseInt(configs.get("openingHour"));
             CLOSINGHOUR = Integer.parseInt(configs.get("closingHour"));
 
-            sc.close();
+           // sc.close();
         } catch (Exception e) {
             new ConfigReadErrorPage();
+            System.out.println(e);
             return false;
         }
         return true;
@@ -80,22 +89,6 @@ public class Main {
         catch (Exception ignored) {}
 
         return (ArrayList<T>) arrayList;
-    }
-
-    public static ArrayList<Reservation> GetReservationsFromDatabase(){
-        ArrayList<Reservation> reservations = new ArrayList<>();
-
-        try{
-            Statement statement = CONNECTION.createStatement();
-            ResultSet resultSet = statement.executeQuery("select reservationId, time, name, notes, tableId from reservations");
-
-            while (resultSet.next()) {
-                reservations.add(new Reservation(resultSet.getInt(1),resultSet.getObject(2,LocalDateTime.class),resultSet.getString(3),resultSet.getString(4),resultSet.getInt(5)));
-            }
-        }
-        catch (Exception ex) {System.out.println("uhoh");}
-
-        return reservations;
     }
 
     public static String encryptPassword(String password,String key){
@@ -133,11 +126,6 @@ public class Main {
     }
 
     public static void main(String[] args) {
-
-        File file = new File("Main.java");
-        String filePath=file.getAbsolutePath();
-        PATH=(filePath.split("Main.java")[0]+"\\src\\main\\java\\qmegamax\\maxi\\");
-
         if(!getConfig())return;
 
         try {

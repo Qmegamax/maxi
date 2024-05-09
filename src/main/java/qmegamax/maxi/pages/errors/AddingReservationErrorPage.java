@@ -1,9 +1,14 @@
 package main.java.qmegamax.maxi.pages.errors;
 
+import main.java.qmegamax.maxi.Main;
+import main.java.qmegamax.maxi.pages.CapchaPage;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 import static main.java.qmegamax.maxi.Main.PATH;
 
@@ -11,8 +16,7 @@ public class AddingReservationErrorPage extends JFrame{
 
     public AddingReservationErrorPage(String error){
         this.setTitle("Error");
-        ImageIcon img = new ImageIcon(PATH+"icon.png");
-        this.setIconImage(img.getImage());
+        Main.setImage(this);
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());

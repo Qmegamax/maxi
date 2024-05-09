@@ -1,11 +1,14 @@
 package main.java.qmegamax.maxi.pages;
 
+import main.java.qmegamax.maxi.Main;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static main.java.qmegamax.maxi.Main.PATH;
@@ -14,8 +17,7 @@ public class CapchaPage extends JFrame{
 
     public CapchaPage(LoginPage loginPage){
         this.setTitle("Capcha");
-        ImageIcon img = new ImageIcon(PATH+"icon.png");
-        this.setIconImage(img.getImage());
+        Main.setImage(this);
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
@@ -29,7 +31,8 @@ public class CapchaPage extends JFrame{
         AtomicInteger rotation= new AtomicInteger((int) (Math.random() * 16));
         BufferedImage bi=null;
         try {
-            bi = ImageIO.read(new File(PATH+"ci\\a"+(int)(Math.random() * 11)+".png"));
+            String path="main/java/qmegamax/maxi/ci/a"+(int)(Math.random() * 11)+".png";
+            bi = ImageIO.read(CapchaPage.class.getClassLoader().getResourceAsStream(path));
         } catch (IOException ignored) {System.out.println("aaaa");}
         BufferedImage finalBi = bi;
         JPanel image=new JPanel() {
@@ -101,8 +104,9 @@ public class CapchaPage extends JFrame{
         AtomicInteger rotation= new AtomicInteger((int) (Math.random() * 16));
         BufferedImage bi=null;
         try {
-            bi = ImageIO.read(new File(PATH+"ci\\a"+(int)(Math.random() * 11)+".png"));
-        } catch (IOException ignored) {System.out.println("aaaa");}
+            String path="main/java/qmegamax/maxi/ci/a"+(int)(Math.random() * 11)+".png";
+            bi = ImageIO.read(CapchaPage.class.getClassLoader().getResourceAsStream(path));
+        } catch (IOException ignored) {System.out.println("aaa");}
         BufferedImage finalBi = bi;
         JPanel image=new JPanel() {
 

@@ -1,5 +1,7 @@
 package main.java.qmegamax.maxi.pages;
 
+import main.java.qmegamax.maxi.Main;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -11,8 +13,7 @@ public class ReservationSuccsesfullPage extends JFrame{
 
     public ReservationSuccsesfullPage(){
         this.setTitle("Success");
-        ImageIcon img = new ImageIcon(PATH+"icon.png");
-        this.setIconImage(img.getImage());
+        Main.setImage(this);
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());

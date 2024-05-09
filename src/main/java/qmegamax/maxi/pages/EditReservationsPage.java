@@ -1,11 +1,11 @@
 package main.java.qmegamax.maxi.pages;
 
+import main.java.qmegamax.maxi.Main;
 import main.java.qmegamax.maxi.util.ButtonRenderer;
 import main.java.qmegamax.maxi.util.Reservation;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -22,8 +22,7 @@ public class EditReservationsPage extends JFrame{
 
     public EditReservationsPage(){
         this.setTitle("Edit reservations");
-        ImageIcon img = new ImageIcon(PATH+"icon.png");
-        this.setIconImage(img.getImage());
+        Main.setImage(this);
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());

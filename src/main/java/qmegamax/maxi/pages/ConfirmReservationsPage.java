@@ -1,5 +1,6 @@
 package main.java.qmegamax.maxi.pages;
 
+import main.java.qmegamax.maxi.Main;
 import main.java.qmegamax.maxi.util.ButtonRenderer;
 import main.java.qmegamax.maxi.util.Reservation;
 
@@ -23,8 +24,7 @@ public class ConfirmReservationsPage extends JFrame {
 
     public ConfirmReservationsPage() {
         this.setTitle("Confirm reservations");
-        ImageIcon img = new ImageIcon(PATH + "icon.png");
-        this.setIconImage(img.getImage());
+        Main.setImage(this);
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());

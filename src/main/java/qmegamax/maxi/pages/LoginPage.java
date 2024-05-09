@@ -20,8 +20,7 @@ public class LoginPage extends JFrame {
 
     public LoginPage() {
         this.setTitle("Login");
-        ImageIcon img = new ImageIcon(PATH + "icon.png");
-        this.setIconImage(img.getImage());
+        Main.setImage(this);
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());

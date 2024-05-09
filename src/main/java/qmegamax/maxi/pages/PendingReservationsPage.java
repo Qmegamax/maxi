@@ -1,6 +1,7 @@
 package main.java.qmegamax.maxi.pages;
 
 import com.toedter.calendar.JDateChooser;
+import main.java.qmegamax.maxi.Main;
 import main.java.qmegamax.maxi.util.Reservation;
 
 import javax.swing.*;
@@ -17,8 +18,7 @@ public class PendingReservationsPage extends JFrame{
 
     public PendingReservationsPage(){
         this.setTitle("Reservations Status");
-        ImageIcon img = new ImageIcon(PATH+"icon.png");
-        this.setIconImage(img.getImage());
+        Main.setImage(this);
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());

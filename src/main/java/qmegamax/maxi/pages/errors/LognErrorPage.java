@@ -1,5 +1,7 @@
 package main.java.qmegamax.maxi.pages.errors;
 
+import main.java.qmegamax.maxi.Main;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -11,8 +13,7 @@ public class LognErrorPage extends JFrame{
 
     public LognErrorPage(){
         this.setTitle("Error");
-        ImageIcon img = new ImageIcon(PATH+"icon.png");
-        this.setIconImage(img.getImage());
+        Main.setImage(this);
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());

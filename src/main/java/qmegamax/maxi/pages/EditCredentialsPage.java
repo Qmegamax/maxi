@@ -1,5 +1,6 @@
 package main.java.qmegamax.maxi.pages;
 
+import main.java.qmegamax.maxi.Main;
 import main.java.qmegamax.maxi.util.ButtonRenderer;
 import main.java.qmegamax.maxi.util.Credential;
 
@@ -20,8 +21,7 @@ public class EditCredentialsPage extends JFrame{
 
     public EditCredentialsPage(){
         this.setTitle("Edit credentials");
-        ImageIcon img = new ImageIcon(PATH+"icon.png");
-        this.setIconImage(img.getImage());
+        Main.setImage(this);
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());

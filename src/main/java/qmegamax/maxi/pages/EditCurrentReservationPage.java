@@ -1,6 +1,7 @@
 package main.java.qmegamax.maxi.pages;
 
 import com.toedter.calendar.JDateChooser;
+import main.java.qmegamax.maxi.Main;
 import main.java.qmegamax.maxi.util.DocumentSizeFilter;
 import main.java.qmegamax.maxi.util.Reservation;
 import main.java.qmegamax.maxi.pages.errors.AddingReservationErrorPage;
@@ -24,8 +25,7 @@ import static main.java.qmegamax.maxi.Main.*;
 public class EditCurrentReservationPage extends JFrame{
     public EditCurrentReservationPage(Reservation reservation){
         this.setTitle("Edit current reservation");
-        ImageIcon img = new ImageIcon(PATH+"icon.png");
-        this.setIconImage(img.getImage());
+        Main.setImage(this);
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
